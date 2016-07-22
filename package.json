@@ -1,0 +1,15 @@
+{
+  "title": "Content PID",
+  "name": "content-pid",
+  "version": "0.0.1",
+  "description": "Show the PID of the content process",
+  "main": "index.js",
+  "author": "Michael Layzell <michael@thelayzells.com>",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "jetpack"
+  ]
+}
