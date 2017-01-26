@@ -26,30 +26,22 @@ const appinfo = Cc["@mozilla.org/xre/app-info;1"]
 
 function handleChange(state) {
   if (state.checked) {
-    const mm = getBrowserForTab(viewFor(tabs.activeTab)).messageManager;
+    let contentPID = appinfo.processID;
 
-    // Load the frame script to get the process ID
-    mm.loadFrameScript("data:,(" + (() => {
-      const appinfo = Components.classes["@mozilla.org/xre/app-info;1"]
-              .getService(Components.interfaces.nsIXULRuntime);
-      sendAsyncMessage("pid-button:pid", appinfo.processID);
-    }).toSource() + ")();", true);
+    const fl = getBrowserForTab(viewFor(tabs.activeTab)).frameLoader;
+    if (fl.tabParent) {
+      contentPID = fl.tabParent.osPid;
+    }
 
-    // Wait for the message to be sent back
-    mm.addMessageListener("pid-button:pid", function listener(aMessage) {
-      mm.removeMessageListener("pid-button:pid", listener);
-
-      // XXX: This is ugly, but easy.
-      panel.contentURL = `data:text/html,
+    panel.contentURL = `data:text/html,
 <html style="overflow:hidden;">
   <b>P: ${appinfo.processID}</b><br>
-  <b>C: ${aMessage.data}</b>
+  <b>C: ${contentPID}</b>
 </html>`;
 
-      // Show the panel at the button
-      panel.show({
-        position: button
-      });
+    // Show the panel at the button
+    panel.show({
+      position: button
     });
   }
 }
